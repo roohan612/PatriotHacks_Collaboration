@@ -1,0 +1,48 @@
+# animation database
+animation_database = {}
+
+walking_frames = "frame1.png"
+dash_frames = 'dash.png'
+jumping_frames = "jump1.png"
+shooting_frames = "shooting1.png"
+enemy_shoot_frames = 'enemy_shooting.png'
+player_hit_health_frame = 'hit_health_frame.png'
+enemy_hit_health_frame = 'enemy_hit_health_frame.png'
+# screen goes all red
+player_death_screen = 'death_screen.pmg'
+# enemy disappears
+enemy_death = 'enemy_death.png'
+
+
+
+# enemies
+enemies = []
+
+for i in range(5):
+    enemies.append([0,e.entity(random.randint(0,600) -300, 80, # 0 = vertical velocity -300, 80 = jumper x-location
+    13, 13, 'enemy']), #pixel size of enemy, can change
+        # display - 300,200 = width, height
+display_r = pygame.Rect(scroll[0], scroll[1], 300, 200)
+for enemy in enemies:
+    if display_r.rect.colliderect(enemy[1].obj.rect):
+
+        # placeholder value for gravity
+            enemy [0] += 0.2
+        # enemies cannot fall faster than 3 pixels
+            if enemy[0] > 3:
+                enemy[0] = 3
+        # movement of enemy indexes its vertical velocity
+            enemy_movement = [0,enemy[0]]
+            if player.x > enemy[1].x + 5:
+                enemy_movement[0] = 1
+            if player.x < enemy[1].x - 5:
+                enemy_movement[0] = -1
+            collision_types = enemy[1].move(enemy_movement, tile_rect)
+            # stop enemies vert velocity once it hits ground
+            if collision_types['bottom'] == True:
+            enemy[0] = 0
+        # render enemies
+            enemy[1].display(display,scroll)
+        # if player collides with enemy
+            if player.obj.rect.colliderect(enemy[1].obj.rect):
+                vertical_momentum = -4

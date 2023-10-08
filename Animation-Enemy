@@ -13,36 +13,65 @@ player_death_screen = 'death_screen.pmg'
 # enemy disappears
 enemy_death = 'enemy_death.png'
 
+ # Define enemy class
+class enemy:
+    ANIMATION: dict[str, pygame.Rect] = {
+        "right": pygame.Rect(26, 0, 26, 32),
+        "left": pygame.Rect(0, 0, 26, 32)
+    }
 
+    H_ACCELERATION: float = 32.0
+    GRAVITY: float = 32.0
+    JUMP_VELOCITY: float = -16.0
 
-# enemies
-enemies = []
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 32, 32)
+        self.y_velocity = 0
 
-for i in range(5):
-    enemies.append([0,e.entity(random.randint(0,600) -300, 80, # 0 = vertical velocity -300, 80 = jumper x-location
-    13, 13, 'enemy']), #pixel size of enemy, can change
-        # display - 300,200 = width, height
-display_r = pygame.Rect(scroll[0], scroll[1], 300, 200)
-for enemy in enemies:
-    if display_r.rect.colliderect(enemy[1].obj.rect):
+    def update(self, player_rect):
+        self.y_velocity += 0.2
 
-        # placeholder value for gravity
-            enemy [0] += 0.2
-        # enemies cannot fall faster than 3 pixels
-            if enemy[0] > 3:
-                enemy[0] = 3
-        # movement of enemy indexes its vertical velocity
-            enemy_movement = [0,enemy[0]]
-            if player.x > enemy[1].x + 5:
-                enemy_movement[0] = 1
-            if player.x < enemy[1].x - 5:
-                enemy_movement[0] = -1
-            collision_types = enemy[1].move(enemy_movement, tile_rect)
-            # stop enemies vert velocity once it hits ground
-            if collision_types['bottom'] == True:
-            enemy[0] = 0
-        # render enemies
-            enemy[1].display(display,scroll)
-        # if player collides with enemy
-            if player.obj.rect.colliderect(enemy[1].obj.rect):
-                vertical_momentum = -4
+    def enemy_update(self):
+        for enemy_instance in enemies:
+            enemy_instance.update(self.player.rect)
+            enemy_instance.rect.y += enemy_instance.y_velocity
+            self.tile_map.surface.blit(self_enemy_image, enemy_instance.rect)
+            if enemy.rect.colliderect(player_rect):
+                pass
+            if enemy.rect.x < player_rect.x:
+                enemy.rect.x += enemy_speed
+            elif enemy.rect.x > player_rect.x:
+                enemy.rect.x -= enemy_speed
+# Define the display_r variable as a Rect
+    enemies = [enemy(400, 300), enemy(600, 300), enemy(800, 300)]
+    display_r = pygame.Rect(0, 0, 32 * 32, 32 * 18)
+
+    ENEMY_DIR: str = "/Users/roohanahmed/Documents/PatriotHacks/exploit/assets/enemy.png"
+    enemy_image: pygame.Surface = pygame.image.load(ENEMY_DIR)
+    for i in range(5):
+        for enemy in enemies:
+            enemy.update(player_t)
+            enemy.rect.y += enemy.y_velocity
+            # check for collision with display_r and enemy
+            if display_r.colliderect(enemy.rect):
+                pass
+                # placeholder value for gravity
+                enemies[0] += 0.2
+                # enemies cannot fall faster than 3 pixels
+                if enemies[0] > 3:
+                    enemies[0] = 3
+                # movement of enemy indexes its vertical velocity
+                enemy_movement = [0, enemy[0]]
+                if player.x > enemy[1].x + 5:
+                    enemy_movement[0] = 1
+                if player.x < enemy[1].x - 5:
+                    enemy_movement[0] = -1
+                collision_types = enemy[1].move(enemy_movement, tile_rect)
+                # stop enemies vert velocity once it hits ground
+                if collision_types['bottom'] == True:
+                    enemy[0] = 0
+                # render enemies
+                enemy[1].display(display, scroll)
+                # if player collides with enemy
+                if player.obj.rect.colliderect(enemy[1].obj.rect):
+                    vertical_momentum = -4

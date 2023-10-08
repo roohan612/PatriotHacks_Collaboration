@@ -1,0 +1,86 @@
+import pygame
+from pygame.locals import *
+import random
+
+pygame.init()
+
+clock = pygame.time.Clock()
+fps = 60
+
+screen_width = 864
+screen_height = 756
+
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption('Flappy Bird')
+
+# define game variables
+bg_scroll = 0
+scroll_speed = 0
+game_over = False
+flying = True
+pipe_gap = 150
+pipe_frequency = 1500 # milliseconds
+last_pipe = pygame.time.get_ticks() - pipe_frequency
+
+class Pipe(pygame.sprite.Sprite):
+    def __init__(self,x,y,position):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('img/pipe.png')
+        self.rect = self.image.get_rect()
+        #position 1 from the top, -1 is from the bottom
+        if position == 1:
+            self.image = pygame.transform.flip(self.image, False, True)
+            self.rect.bottomleft = [x,y - int(pipe_gap) / 2]
+        if position == -1:
+            self.rect.topleft = [x,y + int(pipe_gap) / 2]
+
+    def update(self):
+        self.rect.x -= scroll_speed
+        if self.rect.right < 200:
+            self.kill()
+
+player_group = pygame.sprite.Group()
+pipe_group = pygame.sprite.Group()
+
+
+# load images
+bg = pygame.image.load("/Users/roohanahmed/Documents/PatriotHacks/exploit/assets/background/background.png")
+#ground_img = pygame.image.load('ground.image.png')
+run = True
+while run:
+
+    clock.tick(fps)
+    #player_group.draw(screen)
+    #player_group.update()
+    pipe_group.draw(screen)
+
+    # draw and scroll background
+    screen.blit(bg, (bg_scroll, 0))
+
+    #check for collision
+    if pygame.sprite.groupcollide(player_group, pipe_group, False, False) or player.rect.top < 0:
+        game_over = True
+
+
+
+    if game_over == False and flying == True:
+        #generate new pipes
+        time_now = pygame.time.get_ticks()
+        if time_now - last_pipe > pipe_frequency:
+            pipe_height = random.randint(-100,100)
+            btm_pipe = Pipe(screen_width, int(screen_height / 2) + pipe_height, -1)
+            top_pipe = Pipe(screen_width, int(screen_height / 2) + pipe_height, -1)
+            pipe_group.add(btm_pipe)
+            pipe_group.add(top_pipe)
+            last_pipe = time_now
+
+
+    bg_scroll -= scroll_speed
+    if abs(pipe_scroll) > 35:
+        pipe_scroll = 0
+        pipe_group.update()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+    pygame.display.update()
+pygame.quit()

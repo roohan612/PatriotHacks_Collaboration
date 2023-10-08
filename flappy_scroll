@@ -1,0 +1,38 @@
+import pygame
+from pygame.locals import *
+
+pygame.init()
+
+clock = pygame.time.Clock()
+fps = 60
+
+screen_width = 864
+screen_height = 756
+
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption('Flappy Bird')
+
+# define game variables
+bg_scroll = 0
+scroll_speed = 0
+
+
+# load images
+bg = pygame.image.load("/Users/roohanahmed/Documents/PatriotHacks/exploit/assets/background/background.png")
+#ground_img = pygame.image.load('ground.image.png')
+run = True
+while run:
+
+    clock.tick(fps)
+
+    #draw and scroll background
+    screen.blit(bg, (bg_scroll,0))
+    bg_scroll -= scroll_speed
+    if abs(bg_scroll) > 35:
+        bg_scroll = 0
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+    pygame.display.update()
+pygame.quit()
